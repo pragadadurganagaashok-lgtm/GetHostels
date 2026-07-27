@@ -1,0 +1,599 @@
+/* ======================================
+   GLOBAL
+====================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+}
+
+/* ======================================
+   HEADER
+====================================== */
+
+header{
+    height:80px;
+    background:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 50px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.logo img{
+    width:55px;
+    height:55px;
+}
+
+.logo h1{
+    color:#2244ff;
+}
+
+nav{
+    display:flex;
+    gap:30px;
+}
+
+nav a{
+    text-decoration:none;
+    color:#2244ff;
+    font-weight:600;
+}
+
+nav a:hover{
+    color:#ff6200;
+}
+
+/* ======================================
+   TITLE
+====================================== */
+
+.page-title{
+    text-align:center;
+    margin:35px 0;
+}
+
+.page-title h2{
+    font-size:38px;
+    color:#2340f0;
+}
+
+.page-title p{
+    color:#666;
+    margin-top:10px;
+}
+
+/* ======================================
+   CONTAINER
+====================================== */
+
+.hostel-container{
+    width:95%;
+    margin:auto;
+    padding-bottom:40px;
+}
+
+/* ======================================
+   CARD
+====================================== */
+
+.hostel-card{
+
+    display:flex;
+
+    background:#fff;
+
+    border-radius:22px;
+
+    overflow:hidden;
+
+    margin-bottom:35px;
+
+    box-shadow:0 12px 35px rgba(0,0,0,.12);
+
+    transition:.35s;
+
+}
+
+.hostel-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+/* ======================================
+   IMAGE
+====================================== */
+
+.hostel-image{
+
+    width:340px;
+
+    min-width:340px;
+
+    height:430px;
+
+    overflow:hidden;
+
+    position:relative;
+
+    background:#eee;
+
+}
+
+.hostel-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.4s;
+
+}
+
+.hostel-card:hover img{
+
+    transform:scale(1.06);
+
+}
+
+.status{
+
+    position:absolute;
+
+    top:15px;
+
+    right:15px;
+
+    background:#17b64b;
+
+    color:#fff;
+
+    padding:8px 18px;
+
+    border-radius:30px;
+
+    font-weight:bold;
+
+}
+
+/* ======================================
+   DETAILS
+====================================== */
+
+.hostel-details{
+
+    flex:1;
+
+    padding:30px;
+
+}
+
+.hostel-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.hostel-header h2{
+
+    font-size:34px;
+
+    color:#2340f0;
+
+}
+
+.hostel-type{
+
+    display:inline-block;
+
+    margin-top:8px;
+
+    color:#666;
+
+    font-size:18px;
+
+}
+
+/* ======================================
+   LOCATION
+====================================== */
+
+.location{
+
+    line-height:34px;
+
+    color:#444;
+
+    font-size:17px;
+
+    margin-bottom:20px;
+
+}
+
+/* ======================================
+   CONTACT
+====================================== */
+
+.contact-row{
+
+    display:flex;
+
+    gap:30px;
+
+    margin-bottom:25px;
+
+    font-size:17px;
+
+    color:#444;
+
+}
+
+/* ======================================
+   BED SUMMARY
+====================================== */
+
+.bed-summary{
+
+    display:grid;
+
+    grid-template-columns:repeat(5,1fr);
+
+    gap:15px;
+
+    margin-bottom:30px;
+
+}
+
+.bed-box{
+
+    background:#eef3ff;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    padding:15px;
+
+}
+
+.bed-box h4{
+
+    color:#2340f0;
+
+    margin-bottom:8px;
+
+    font-size:16px;
+
+}
+
+.bed-box span{
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+
+/* ======================================
+   SECTION TITLE
+====================================== */
+
+.section-title{
+
+    color:#2340f0;
+
+    margin:20px 0 15px;
+
+}
+
+/* ======================================
+   SHARING GRID
+====================================== */
+
+.sharing-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:15px;
+
+}
+
+.share-card{
+
+    background:#fafafa;
+
+    border:1px solid #ddd;
+
+    border-radius:12px;
+
+    text-align:center;
+
+    padding:15px;
+
+    transition:.3s;
+
+}
+
+.share-card:hover{
+
+    background:#2340f0;
+
+    color:#fff;
+
+}
+
+.share-card h5{
+
+    margin-bottom:10px;
+
+    font-size:17px;
+
+}
+
+.share-card span{
+
+    font-size:22px;
+
+    font-weight:bold;
+
+}
+
+/* ======================================
+   FACILITIES
+====================================== */
+
+.facility-list{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:12px;
+
+    margin-top:20px;
+
+}
+
+.facility-list span{
+
+    background:#eef4ff;
+
+    color:#2340f0;
+
+    padding:9px 16px;
+
+    border-radius:30px;
+
+    font-size:14px;
+
+    font-weight:600;
+
+}
+
+/* ======================================
+   BUTTONS
+====================================== */
+
+.button-row{
+
+    display:flex;
+
+    gap:15px;
+
+    margin-top:30px;
+
+}
+
+.button-row a{
+
+    flex:1;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    color:#fff;
+
+    padding:15px;
+
+    border-radius:10px;
+
+    font-size:17px;
+
+    font-weight:bold;
+
+    transition:.3s;
+
+}
+
+.bed-btn{
+
+    background:#7b2cff;
+
+}
+
+.bed-btn:hover{
+
+    background:#631de5;
+
+}
+
+.map-btn{
+
+    background:#14b54a;
+
+}
+
+.map-btn:hover{
+
+    background:#10953c;
+
+}
+
+.edit-btn{
+
+    background:#2340f0;
+
+}
+
+.edit-btn:hover{
+
+    background:#1633d2;
+
+}
+
+.delete-btn{
+
+    background:#ef3535;
+
+}
+
+.delete-btn:hover{
+
+    background:#d51e1e;
+
+}
+
+/* ======================================
+   EMPTY
+====================================== */
+
+.empty-box{
+
+    background:#fff;
+
+    padding:80px;
+
+    text-align:center;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+}
+
+.add-btn{
+
+    display:inline-block;
+
+    margin-top:20px;
+
+    background:#2340f0;
+
+    color:#fff;
+
+    padding:15px 35px;
+
+    border-radius:10px;
+
+    text-decoration:none;
+
+}
+
+/* ======================================
+   RESPONSIVE
+====================================== */
+
+@media(max-width:1200px){
+
+.hostel-card{
+
+    flex-direction:column;
+
+}
+
+.hostel-image{
+
+    width:100%;
+
+    min-width:100%;
+
+    height:280px;
+
+}
+
+.bed-summary{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.sharing-grid{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+.button-row{
+
+    flex-direction:column;
+
+}
+
+.contact-row{
+
+    flex-direction:column;
+
+}
+
+}
+
+@media(max-width:700px){
+
+.bed-summary{
+
+    grid-template-columns:1fr;
+
+}
+
+.sharing-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+.logo h1{
+
+    font-size:24px;
+
+}
+
+header{
+
+    padding:15px;
+
+}
+
+nav{
+
+    gap:12px;
+
+    font-size:14px;
+
+}
+
+}
