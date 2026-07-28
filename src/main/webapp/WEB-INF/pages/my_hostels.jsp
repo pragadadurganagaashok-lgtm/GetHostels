@@ -100,10 +100,10 @@ href="${pageContext.request.contextPath}/owner/addHostel">
 
             <c:when test="${not empty hostel.coverImage}">
 
-                <img src="${pageContext.request.contextPath}/uploads/${hostel.coverImage}"
-                     alt="Hostel Image">
+                <img src="${hostel.coverImage}"
+                 alt="Hostel Image">
 
-            </c:when>
+             </c:when>
 
             <c:otherwise>
 
