@@ -30,10 +30,6 @@ public class HostelController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    // =====================================================
-    // ADD HOSTEL PAGE
-    // =====================================================
-
     @GetMapping("/addHostel")
     public String showAddHostelPage(HttpSession session) {
 
@@ -43,10 +39,6 @@ public class HostelController {
 
         return "add_hostel";
     }
-
-    // =====================================================
-    // SAVE HOSTEL
-    // =====================================================
 
     @PostMapping("/saveHostel")
     public String saveHostel(
@@ -64,17 +56,30 @@ public class HostelController {
 
             hostel.setOwner(owner);
 
-            // Upload image to Cloudinary
             if (image != null && !image.isEmpty()) {
+
+                System.out.println("========== IMAGE UPLOAD START ==========");
+                System.out.println("Original File : " + image.getOriginalFilename());
+                System.out.println("File Size     : " + image.getSize());
 
                 String imageUrl = cloudinaryService.uploadImage(image);
 
+                System.out.println("Cloudinary URL : " + imageUrl);
+
                 hostel.setCoverImage(imageUrl);
+
+                System.out.println("Hostel Cover Image : " + hostel.getCoverImage());
+
+                System.out.println("========== IMAGE UPLOAD END ==========");
+            } else {
+
+                System.out.println("NO IMAGE SELECTED");
             }
 
-            hostelService.saveHostel(hostel);
+            HostelEntity saved = hostelService.saveHostel(hostel);
 
             System.out.println("Hostel Saved Successfully");
+            System.out.println("Saved CoverImage in DB : " + saved.getCoverImage());
 
         } catch (Exception e) {
 
@@ -83,10 +88,6 @@ public class HostelController {
 
         return "redirect:/owner/myHostels";
     }
-
-    // =====================================================
-    // MY HOSTELS
-    // =====================================================
 
     @GetMapping("/myHostels")
     public String showMyHostels(HttpSession session, Model model) {
@@ -100,14 +101,17 @@ public class HostelController {
         List<HostelEntity> hostelList =
                 hostelService.getHostelsByOwner(owner);
 
+        for (HostelEntity h : hostelList) {
+            System.out.println("-------------------------------");
+            System.out.println("Hostel : " + h.getHostelName());
+            System.out.println("CoverImage : " + h.getCoverImage());
+            System.out.println("-------------------------------");
+        }
+
         model.addAttribute("hostels", hostelList);
 
         return "my_hostels";
     }
-
-    // =====================================================
-    // EDIT HOSTEL PAGE
-    // =====================================================
 
     @GetMapping("/editHostel/{id}")
     public String showEditHostelPage(
@@ -132,10 +136,6 @@ public class HostelController {
         return "add_hostel";
     }
 
-    // =====================================================
-    // UPDATE HOSTEL
-    // =====================================================
-
     @PostMapping("/updateHostel")
     public String updateHostel(
             @ModelAttribute HostelEntity hostel,
@@ -159,13 +159,15 @@ public class HostelController {
 
             hostel.setOwner(owner);
 
-            // Keep existing image
             hostel.setCoverImage(existingHostel.getCoverImage());
 
-            // Replace image only if a new one is selected
             if (image != null && !image.isEmpty()) {
 
+                System.out.println("Updating image...");
+
                 String imageUrl = cloudinaryService.uploadImage(image);
+
+                System.out.println("New Cloudinary URL : " + imageUrl);
 
                 hostel.setCoverImage(imageUrl);
             }
@@ -173,6 +175,7 @@ public class HostelController {
             hostelService.updateHostel(hostel);
 
             System.out.println("Hostel Updated Successfully");
+            System.out.println("Updated Cover Image : " + hostel.getCoverImage());
 
         } catch (Exception e) {
 
@@ -181,10 +184,6 @@ public class HostelController {
 
         return "redirect:/owner/myHostels";
     }
-
-    // =====================================================
-    // DELETE HOSTEL
-    // =====================================================
 
     @GetMapping("/deleteHostel/{id}")
     public String deleteHostel(

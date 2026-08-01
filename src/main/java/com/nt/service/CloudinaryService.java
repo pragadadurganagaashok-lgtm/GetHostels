@@ -17,9 +17,24 @@ public class CloudinaryService {
 
     public String uploadImage(MultipartFile file) throws IOException {
 
+        System.out.println("======================================");
+        System.out.println("CLOUDINARY IMAGE UPLOAD START");
+        System.out.println("File Name : " + file.getOriginalFilename());
+        System.out.println("File Size : " + file.getSize());
+        System.out.println("Content Type : " + file.getContentType());
+
         Map<?, ?> uploadResult =
                 cloudinary.uploader().upload(file.getBytes(), Map.of());
 
-        return uploadResult.get("secure_url").toString();
+        System.out.println("Cloudinary Response:");
+        System.out.println(uploadResult);
+
+        String secureUrl = uploadResult.get("secure_url").toString();
+
+        System.out.println("Image Uploaded Successfully");
+        System.out.println("Secure URL : " + secureUrl);
+        System.out.println("======================================");
+
+        return secureUrl;
     }
 }
