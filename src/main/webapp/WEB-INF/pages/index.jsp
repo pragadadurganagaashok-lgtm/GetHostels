@@ -208,10 +208,10 @@ pageEncoding="UTF-8"%>
 
                                 <c:when test="${not empty hostel.coverImage}">
 
-                                    <img
-                                    src="${pageContext.request.contextPath}/uploads/${hostel.coverImage}"
-                                    alt="${hostel.hostelName}">
-
+                                          <img
+                                             src="${hostel.coverImage}"
+                                             alt="${hostel.hostelName}">
+ 
                                 </c:when>
 
                                 <c:otherwise>
