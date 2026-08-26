@@ -236,9 +236,9 @@ body{
 
     <nav>
 
-        <a href="./">Home</a>
+       <a href="${pageContext.request.contextPath}/./">Home</a>
 
-        <a href="login">Login</a>
+        <a href="${pageContext.request.contextPath}/owner/login">Login</a>
 
     </nav>
 
@@ -355,11 +355,8 @@ Create Account
 
 Already have an account?
 
-<a href="owner/login">
+ <a href="${pageContext.request.contextPath}/owner/login">Login</a>
 
-Login Here
-
-</a>
 
 </div>
 

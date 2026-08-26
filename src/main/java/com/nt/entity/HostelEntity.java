@@ -71,6 +71,9 @@ public class HostelEntity {
 
     private Double longitude;
     
+    @Transient
+    private Double distance;
+    
     @Column(length = 1000)
     private String googleMapLink;
 

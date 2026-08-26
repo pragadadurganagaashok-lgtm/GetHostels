@@ -82,6 +82,10 @@ href="${pageContext.request.contextPath}/css/add_hostel.css">
         : '/owner/updateHostel'}"
       method="post"
       enctype="multipart/form-data">
+      
+      <input type="hidden" name="latitude" id="latitude">
+
+    <input type="hidden" name="longitude" id="longitude">
 
     <input type="hidden"
            name="hostelId"
@@ -297,7 +301,9 @@ name="googleMapLink"
 value="${hostel.googleMapLink}"
 placeholder="Paste Google Maps Link">
 
+
 </div>
+
 
 </div>
 
@@ -750,6 +756,54 @@ function loadAreas() {
     };
 </script>
 </c:if>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    if (!navigator.geolocation) {
+
+        alert("Your browser does not support location services.");
+
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+
+        function (position) {
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            document.getElementById("latitude").value = latitude;
+            document.getElementById("longitude").value = longitude;
+
+            console.log("Latitude  :", latitude);
+            console.log("Longitude :", longitude);
+
+        },
+
+        function (error) {
+
+            console.log("Location Error:", error);
+
+            alert(
+                "Please allow location access so we can save the hostel location."
+            );
+
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+
+    );
+
+});
+
+</script>
 
 </body>
 

@@ -149,9 +149,12 @@ href="${pageContext.request.contextPath}/css/style.css">
 
 <nav>
 
-<a href="./">Home</a>
+<a href="${pageContext.request.contextPath}/./">Home</a>
 
-<a href="owner/register">Register</a>
+    <a href="${pageContext.request.contextPath}/owner/register">
+        Register Here
+    </a>
+
 
 </nav>
 

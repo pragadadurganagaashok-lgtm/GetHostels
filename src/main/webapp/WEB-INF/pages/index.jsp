@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <!DOCTYPE html>
 <html>
@@ -27,12 +28,29 @@ pageEncoding="UTF-8"%>
     </div>
 
     <nav>
-        <a href="/">Home</a>
-        <a href="#">Boys Hostels</a>
-        <a href="#">Girls Hostels</a>
-        <a href="#">Co-Live</a>
-        <a href="#">About</a>
-        <a href="#">Contact</a>
+      <a href="${pageContext.request.contextPath}/">
+        Home
+    </a>
+
+    <a href="${pageContext.request.contextPath}/boys">
+        Boys Hostels
+    </a>
+
+    <a href="${pageContext.request.contextPath}/girls">
+        Girls Hostels
+    </a>
+
+    <a href="${pageContext.request.contextPath}/colive">
+        Co-Live
+    </a>
+
+    <a href="${pageContext.request.contextPath}/about">
+        About
+    </a>
+
+    <a href="${pageContext.request.contextPath}/contact">
+        Contact
+    </a>
         <a href="${pageContext.request.contextPath}/owner/login">
     Owner Login
 </a>
@@ -254,6 +272,28 @@ pageEncoding="UTF-8"%>
                                 📍
                                 ${hostel.area},
                                 ${hostel.city}
+
+                            </div>
+                            
+                           <c:if test="${not empty hostelDistances[hostel.hostelId]}">
+
+                            <div class="hostel-distance">
+
+                               📍
+                               <fmt:formatNumber
+                                value="${hostelDistances[hostel.hostelId]}"
+                                   maxFractionDigits="2"/>
+
+                                   km away
+
+                            </div>
+
+</c:if>
+                                     <!-- ADDRESS -->
+
+                            <div class="user-location">
+
+                                🏡 ${hostel.address}
 
                             </div>
 
@@ -502,6 +542,82 @@ pageEncoding="UTF-8"%>
     © 2026 AU Private Limited. All Rights Reserved.
 
 </footer>
+
+<script>
+
+window.addEventListener("load", function () {
+
+    // Check browser GPS support
+    if (!navigator.geolocation) {
+
+        console.log("Geolocation is not supported.");
+
+        return;
+    }
+
+    // Check if location is already present in URL
+    const urlParams = new URLSearchParams(window.location.search);
+
+    const existingLatitude = urlParams.get("latitude");
+    const existingLongitude = urlParams.get("longitude");
+
+    // If location already exists, DON'T request/reload again
+    if (existingLatitude && existingLongitude) {
+
+        console.log("Location already available.");
+
+        console.log("User Latitude  : " + existingLatitude);
+        console.log("User Longitude : " + existingLongitude);
+
+        return;
+    }
+
+    // Request location only once
+    navigator.geolocation.getCurrentPosition(
+
+        function (position) {
+
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            console.log("User Latitude  : " + latitude);
+            console.log("User Longitude : " + longitude);
+
+            // Current URL
+            const currentUrl =
+                new URL(window.location.href);
+
+            // Add location to URL
+            currentUrl.searchParams.set(
+                "latitude",
+                latitude
+            );
+
+            currentUrl.searchParams.set(
+                "longitude",
+                longitude
+            );
+
+            // Reload ONLY ONCE
+            window.location.href =
+                currentUrl.toString();
+
+        },
+
+        function (error) {
+
+            console.log(
+                "Location permission/error:",
+                error.message
+            );
+
+        }
+
+    );
+
+});
+
+</script>
 
 </body>
 

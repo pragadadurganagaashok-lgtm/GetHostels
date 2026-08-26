@@ -17,6 +17,7 @@ import com.nt.entity.HostelEntity;
 import com.nt.entity.OwnerEntity;
 import com.nt.service.CloudinaryService;
 import com.nt.service.IHostelMgmtService;
+import com.nt.util.GoogleMapUtil;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -30,6 +31,10 @@ public class HostelController {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    // =====================================================
+    // ADD HOSTEL PAGE
+    // =====================================================
+
     @GetMapping("/addHostel")
     public String showAddHostelPage(HttpSession session) {
 
@@ -40,6 +45,10 @@ public class HostelController {
         return "add_hostel";
     }
 
+    // =====================================================
+    // SAVE HOSTEL
+    // =====================================================
+
     @PostMapping("/saveHostel")
     public String saveHostel(
             @ModelAttribute HostelEntity hostel,
@@ -48,7 +57,12 @@ public class HostelController {
 
         try {
 
-            OwnerEntity owner = (OwnerEntity) session.getAttribute("owner");
+            // -------------------------------------------------
+            // CHECK OWNER LOGIN
+            // -------------------------------------------------
+
+            OwnerEntity owner =
+                    (OwnerEntity) session.getAttribute("owner");
 
             if (owner == null) {
                 return "redirect:/owner/login";
@@ -56,30 +70,115 @@ public class HostelController {
 
             hostel.setOwner(owner);
 
+            // =================================================
+            // GOOGLE MAP LOCATION
+            // =================================================
+
+            if (hostel.getGoogleMapLink() != null
+                    && !hostel.getGoogleMapLink().isBlank()) {
+
+                System.out.println(
+                        "========== GOOGLE MAP LOCATION ==========");
+
+                System.out.println(
+                        "Google Map URL : "
+                        + hostel.getGoogleMapLink());
+
+                double[] coordinates =
+                        GoogleMapUtil.extractCoordinates(
+                                hostel.getGoogleMapLink());
+
+                if (coordinates != null) {
+
+                    hostel.setLatitude(coordinates[0]);
+
+                    hostel.setLongitude(coordinates[1]);
+
+                    System.out.println(
+                            "Latitude  : "
+                            + hostel.getLatitude());
+
+                    System.out.println(
+                            "Longitude : "
+                            + hostel.getLongitude());
+
+                } else {
+
+                    System.out.println(
+                            "Could not extract latitude/longitude from Google Map URL.");
+                }
+
+                System.out.println(
+                        "==========================================");
+            }
+
+            // =================================================
+            // CLOUDINARY IMAGE UPLOAD
+            // =================================================
+
             if (image != null && !image.isEmpty()) {
 
-                System.out.println("========== IMAGE UPLOAD START ==========");
-                System.out.println("Original File : " + image.getOriginalFilename());
-                System.out.println("File Size     : " + image.getSize());
+                System.out.println(
+                        "========== IMAGE UPLOAD START ==========");
 
-                String imageUrl = cloudinaryService.uploadImage(image);
+                System.out.println(
+                        "Original File : "
+                        + image.getOriginalFilename());
 
-                System.out.println("Cloudinary URL : " + imageUrl);
+                System.out.println(
+                        "File Size     : "
+                        + image.getSize());
+
+                String imageUrl =
+                        cloudinaryService.uploadImage(image);
+
+                System.out.println(
+                        "Cloudinary URL : "
+                        + imageUrl);
 
                 hostel.setCoverImage(imageUrl);
 
-                System.out.println("Hostel Cover Image : " + hostel.getCoverImage());
+                System.out.println(
+                        "Hostel Cover Image : "
+                        + hostel.getCoverImage());
 
-                System.out.println("========== IMAGE UPLOAD END ==========");
+                System.out.println(
+                        "========== IMAGE UPLOAD END ==========");
+
             } else {
 
-                System.out.println("NO IMAGE SELECTED");
+                System.out.println(
+                        "NO IMAGE SELECTED");
             }
 
-            HostelEntity saved = hostelService.saveHostel(hostel);
+            // =================================================
+            // SAVE HOSTEL
+            // =================================================
 
-            System.out.println("Hostel Saved Successfully");
-            System.out.println("Saved CoverImage in DB : " + saved.getCoverImage());
+            HostelEntity saved =
+                    hostelService.saveHostel(hostel);
+
+            System.out.println(
+                    "========== HOSTEL SAVED ==========");
+
+            System.out.println(
+                    "Hostel Name : "
+                    + saved.getHostelName());
+
+            System.out.println(
+                    "Latitude   : "
+                    + saved.getLatitude());
+
+            System.out.println(
+                    "Longitude  : "
+                    + saved.getLongitude());
+
+            System.out.println(
+                    "CoverImage : "
+                    + saved.getCoverImage());
+
+            System.out.println(
+                    "===================================");
 
         } catch (Exception e) {
 
@@ -89,10 +188,17 @@ public class HostelController {
         return "redirect:/owner/myHostels";
     }
 
-    @GetMapping("/myHostels")
-    public String showMyHostels(HttpSession session, Model model) {
+    // =====================================================
+    // MY HOSTELS
+    // =====================================================
 
-        OwnerEntity owner = (OwnerEntity) session.getAttribute("owner");
+    @GetMapping("/myHostels")
+    public String showMyHostels(
+            HttpSession session,
+            Model model) {
+
+        OwnerEntity owner =
+                (OwnerEntity) session.getAttribute("owner");
 
         if (owner == null) {
             return "redirect:/owner/login";
@@ -102,16 +208,44 @@ public class HostelController {
                 hostelService.getHostelsByOwner(owner);
 
         for (HostelEntity h : hostelList) {
-            System.out.println("-------------------------------");
-            System.out.println("Hostel : " + h.getHostelName());
-            System.out.println("CoverImage : " + h.getCoverImage());
-            System.out.println("-------------------------------");
+
+            System.out.println(
+                    "-------------------------------");
+
+            System.out.println(
+                    "Hostel : "
+                    + h.getHostelName());
+
+            System.out.println(
+                    "CoverImage : "
+                    + h.getCoverImage());
+
+            System.out.println(
+                    "Latitude : "
+                    + h.getLatitude());
+
+            System.out.println(
+                    "Longitude : "
+                    + h.getLongitude());
+
+            System.out.println(
+                    "Google Map : "
+                    + h.getGoogleMapLink());
+
+            System.out.println(
+                    "-------------------------------");
         }
 
-        model.addAttribute("hostels", hostelList);
+        model.addAttribute(
+                "hostels",
+                hostelList);
 
         return "my_hostels";
     }
+
+    // =====================================================
+    // EDIT HOSTEL
+    // =====================================================
 
     @GetMapping("/editHostel/{id}")
     public String showEditHostelPage(
@@ -119,63 +253,173 @@ public class HostelController {
             HttpSession session,
             Model model) {
 
-        OwnerEntity owner = (OwnerEntity) session.getAttribute("owner");
+        OwnerEntity owner =
+                (OwnerEntity) session.getAttribute("owner");
 
         if (owner == null) {
             return "redirect:/owner/login";
         }
 
-        HostelEntity hostel = hostelService.getHostelById(id);
+        HostelEntity hostel =
+                hostelService.getHostelById(id);
 
         if (hostel == null) {
             return "redirect:/owner/myHostels";
         }
 
-        model.addAttribute("hostel", hostel);
+        model.addAttribute(
+                "hostel",
+                hostel);
 
         return "add_hostel";
     }
 
+    // =====================================================
+    // UPDATE HOSTEL
+    // =====================================================
+
     @PostMapping("/updateHostel")
     public String updateHostel(
             @ModelAttribute HostelEntity hostel,
-            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "image", required = false)
+            MultipartFile image,
             HttpSession session) {
 
         try {
 
-            OwnerEntity owner = (OwnerEntity) session.getAttribute("owner");
+            OwnerEntity owner =
+                    (OwnerEntity) session.getAttribute("owner");
 
             if (owner == null) {
                 return "redirect:/owner/login";
             }
 
             HostelEntity existingHostel =
-                    hostelService.getHostelById(hostel.getHostelId());
+                    hostelService.getHostelById(
+                            hostel.getHostelId());
 
             if (existingHostel == null) {
                 return "redirect:/owner/myHostels";
             }
 
+            // -------------------------------------------------
+            // OWNER
+            // -------------------------------------------------
+
             hostel.setOwner(owner);
 
-            hostel.setCoverImage(existingHostel.getCoverImage());
+            // -------------------------------------------------
+            // KEEP OLD IMAGE
+            // -------------------------------------------------
+
+            hostel.setCoverImage(
+                    existingHostel.getCoverImage());
+
+            // =================================================
+            // GOOGLE MAP LOCATION
+            // =================================================
+
+            if (hostel.getGoogleMapLink() != null
+                    && !hostel.getGoogleMapLink().isBlank()) {
+
+                System.out.println(
+                        "========== UPDATING LOCATION ==========");
+
+                System.out.println(
+                        "Google Map URL : "
+                        + hostel.getGoogleMapLink());
+
+                double[] coordinates =
+                        GoogleMapUtil.extractCoordinates(
+                                hostel.getGoogleMapLink());
+
+                if (coordinates != null) {
+
+                    hostel.setLatitude(
+                            coordinates[0]);
+
+                    hostel.setLongitude(
+                            coordinates[1]);
+
+                    System.out.println(
+                            "New Latitude : "
+                            + hostel.getLatitude());
+
+                    System.out.println(
+                            "New Longitude : "
+                            + hostel.getLongitude());
+
+                } else {
+
+                    // Keep existing coordinates if
+                    // the new URL cannot be processed.
+
+                    hostel.setLatitude(
+                            existingHostel.getLatitude());
+
+                    hostel.setLongitude(
+                            existingHostel.getLongitude());
+
+                    System.out.println(
+                            "Could not extract new coordinates.");
+                    System.out.println(
+                            "Keeping existing coordinates.");
+                }
+
+                System.out.println(
+                        "=======================================");
+            } else {
+
+                // No new Google Maps URL supplied.
+                // Keep existing location.
+
+                hostel.setLatitude(
+                        existingHostel.getLatitude());
+
+                hostel.setLongitude(
+                        existingHostel.getLongitude());
+            }
+
+            // =================================================
+            // NEW CLOUDINARY IMAGE
+            // =================================================
 
             if (image != null && !image.isEmpty()) {
 
-                System.out.println("Updating image...");
+                System.out.println(
+                        "Updating image...");
 
-                String imageUrl = cloudinaryService.uploadImage(image);
+                String imageUrl =
+                        cloudinaryService.uploadImage(image);
 
-                System.out.println("New Cloudinary URL : " + imageUrl);
+                System.out.println(
+                        "New Cloudinary URL : "
+                        + imageUrl);
 
-                hostel.setCoverImage(imageUrl);
+                hostel.setCoverImage(
+                        imageUrl);
             }
+
+            // =================================================
+            // UPDATE DATABASE
+            // =================================================
 
             hostelService.updateHostel(hostel);
 
-            System.out.println("Hostel Updated Successfully");
-            System.out.println("Updated Cover Image : " + hostel.getCoverImage());
+            System.out.println(
+                    "Hostel Updated Successfully");
+
+            System.out.println(
+                    "Updated Cover Image : "
+                    + hostel.getCoverImage());
+
+            System.out.println(
+                    "Updated Latitude : "
+                    + hostel.getLatitude());
+
+            System.out.println(
+                    "Updated Longitude : "
+                    + hostel.getLongitude());
 
         } catch (Exception e) {
 
@@ -185,12 +429,17 @@ public class HostelController {
         return "redirect:/owner/myHostels";
     }
 
+    // =====================================================
+    // DELETE HOSTEL
+    // =====================================================
+
     @GetMapping("/deleteHostel/{id}")
     public String deleteHostel(
             @PathVariable("id") Long id,
             HttpSession session) {
 
-        OwnerEntity owner = (OwnerEntity) session.getAttribute("owner");
+        OwnerEntity owner =
+                (OwnerEntity) session.getAttribute("owner");
 
         if (owner == null) {
             return "redirect:/owner/login";
@@ -200,5 +449,4 @@ public class HostelController {
 
         return "redirect:/owner/myHostels";
     }
-
 }
