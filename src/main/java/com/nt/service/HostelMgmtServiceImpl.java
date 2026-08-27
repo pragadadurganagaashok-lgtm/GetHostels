@@ -67,6 +67,8 @@ public class HostelMgmtServiceImpl implements IHostelMgmtService {
         existingHostel.setLandmark(updatedHostel.getLandmark());
         existingHostel.setPincode(updatedHostel.getPincode());
         existingHostel.setGoogleMapLink(updatedHostel.getGoogleMapLink());
+        existingHostel.setLatitude(updatedHostel.getLatitude());
+        existingHostel.setLongitude(updatedHostel.getLongitude());
 
         existingHostel.setOwnerPhone(updatedHostel.getOwnerPhone());
         existingHostel.setAlternatePhone(updatedHostel.getAlternatePhone());
