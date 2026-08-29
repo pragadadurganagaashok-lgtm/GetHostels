@@ -257,12 +257,16 @@ pageEncoding="UTF-8"%>
                                 <h2>
                                     ${hostel.hostelName}
                                 </h2>
+                                
 
                                 <span class="active-badge">
                                     ${hostel.status}
                                 </span>
 
                             </div>
+                             <div class="hostel-type">
+                                    🏠 ${hostel.hostelType}
+                                </div>
 
 
                             <!-- LOCATION -->
