@@ -15,6 +15,7 @@ import com.nt.service.IHostelMgmtService;
 import com.nt.util.DistanceUtil;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class UserController {
@@ -144,11 +145,15 @@ public class UserController {
     // =====================================================
 
     @GetMapping("/boys")
-    public String boysHostels(Model model) {
+    public String boysHostels(
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude,
+            Model model) {
 
         List<HostelEntity> hostels =
                 hostelService.getAllActiveHostels();
 
+        // Filter Boys hostels
         List<HostelEntity> boysHostels =
                 hostels.stream()
                        .filter(hostel ->
@@ -156,11 +161,91 @@ public class UserController {
                                hostel.getHostelType()
                                      .toLowerCase()
                                      .contains("boys"))
-                       .toList();
+                       .collect(Collectors.toList());
+
+        // Distance map
+        Map<Long, Double> hostelDistances =
+                new HashMap<>();
+
+        // =====================================================
+        // USER LOCATION AVAILABLE
+        // =====================================================
+
+        if (latitude != null && longitude != null) {
+
+            System.out.println(
+                    "========== BOYS HOSTELS LOCATION ==========");
+
+            System.out.println(
+                    "User Latitude  : " + latitude);
+
+            System.out.println(
+                    "User Longitude : " + longitude);
+
+            for (HostelEntity hostel : boysHostels) {
+
+                if (hostel.getLatitude() != null
+                        && hostel.getLongitude() != null) {
+
+                    double distance =
+                            DistanceUtil.calculateDistance(
+                                    latitude,
+                                    longitude,
+                                    hostel.getLatitude(),
+                                    hostel.getLongitude());
+
+                    hostelDistances.put(
+                            hostel.getHostelId(),
+                            distance);
+
+                    System.out.println(
+                            hostel.getHostelName()
+                            + " -> "
+                            + distance
+                            + " KM");
+                }
+            }
+
+            // Sort nearest → farthest
+            boysHostels.sort(
+                    Comparator.comparingDouble(
+                            hostel ->
+                                    hostelDistances.getOrDefault(
+                                            hostel.getHostelId(),
+                                            Double.MAX_VALUE)
+                    )
+            );
+
+            System.out.println(
+                    "========== SORTED BOYS HOSTELS ==========");
+
+            for (HostelEntity hostel : boysHostels) {
+
+                Double distance =
+                        hostelDistances.get(
+                                hostel.getHostelId());
+
+                if (distance != null) {
+
+                    System.out.println(
+                            hostel.getHostelName()
+                            + " -> "
+                            + distance
+                            + " KM");
+                }
+            }
+
+            System.out.println(
+                    "==========================================");
+        }
 
         model.addAttribute(
                 "hostels",
                 boysHostels);
+
+        model.addAttribute(
+                "hostelDistances",
+                hostelDistances);
 
         return "boys_hostels";
     }
@@ -169,13 +254,16 @@ public class UserController {
     // =====================================================
     // GIRLS HOSTELS
     // =====================================================
-
     @GetMapping("/girls")
-    public String girlsHostels(Model model) {
+    public String girlsHostels(
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude,
+            Model model) {
 
         List<HostelEntity> hostels =
                 hostelService.getAllActiveHostels();
 
+        // Filter Girls hostels
         List<HostelEntity> girlsHostels =
                 hostels.stream()
                        .filter(hostel ->
@@ -183,11 +271,91 @@ public class UserController {
                                hostel.getHostelType()
                                      .toLowerCase()
                                      .contains("girls"))
-                       .toList();
+                       .collect(Collectors.toList());
+
+        // Distance map
+        Map<Long, Double> hostelDistances =
+                new HashMap<>();
+
+        // =====================================================
+        // USER LOCATION AVAILABLE
+        // =====================================================
+
+        if (latitude != null && longitude != null) {
+
+            System.out.println(
+                    "========== GIRLS HOSTELS LOCATION ==========");
+
+            System.out.println(
+                    "User Latitude  : " + latitude);
+
+            System.out.println(
+                    "User Longitude : " + longitude);
+
+            for (HostelEntity hostel : girlsHostels) {
+
+                if (hostel.getLatitude() != null
+                        && hostel.getLongitude() != null) {
+
+                    double distance =
+                            DistanceUtil.calculateDistance(
+                                    latitude,
+                                    longitude,
+                                    hostel.getLatitude(),
+                                    hostel.getLongitude());
+
+                    hostelDistances.put(
+                            hostel.getHostelId(),
+                            distance);
+
+                    System.out.println(
+                            hostel.getHostelName()
+                            + " -> "
+                            + distance
+                            + " KM");
+                }
+            }
+
+            // Sort nearest → farthest
+            girlsHostels.sort(
+                    Comparator.comparingDouble(
+                            hostel ->
+                                    hostelDistances.getOrDefault(
+                                            hostel.getHostelId(),
+                                            Double.MAX_VALUE)
+                    )
+            );
+
+            System.out.println(
+                    "========== SORTED GIRLS HOSTELS ==========");
+
+            for (HostelEntity hostel : girlsHostels) {
+
+                Double distance =
+                        hostelDistances.get(
+                                hostel.getHostelId());
+
+                if (distance != null) {
+
+                    System.out.println(
+                            hostel.getHostelName()
+                            + " -> "
+                            + distance
+                            + " KM");
+                }
+            }
+
+            System.out.println(
+                    "===========================================");
+        }
 
         model.addAttribute(
                 "hostels",
                 girlsHostels);
+
+        model.addAttribute(
+                "hostelDistances",
+                hostelDistances);
 
         return "girls_hostels";
     }
@@ -198,11 +366,15 @@ public class UserController {
     // =====================================================
 
     @GetMapping("/colive")
-    public String coLiveHostels(Model model) {
+    public String coLiveHostels(
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude,
+            Model model) {
 
         List<HostelEntity> hostels =
                 hostelService.getAllActiveHostels();
 
+        // Filter Co-Live hostels
         List<HostelEntity> coLiveHostels =
                 hostels.stream()
                        .filter(hostel ->
@@ -210,15 +382,94 @@ public class UserController {
                                hostel.getHostelType()
                                      .toLowerCase()
                                      .contains("co"))
-                       .toList();
+                       .collect(Collectors.toList());
+
+        // Distance map
+        Map<Long, Double> hostelDistances =
+                new HashMap<>();
+
+        // =====================================================
+        // USER LOCATION AVAILABLE
+        // =====================================================
+
+        if (latitude != null && longitude != null) {
+
+            System.out.println(
+                    "========== CO-LIVE HOSTELS LOCATION ==========");
+
+            System.out.println(
+                    "User Latitude  : " + latitude);
+
+            System.out.println(
+                    "User Longitude : " + longitude);
+
+            for (HostelEntity hostel : coLiveHostels) {
+
+                if (hostel.getLatitude() != null
+                        && hostel.getLongitude() != null) {
+
+                    double distance =
+                            DistanceUtil.calculateDistance(
+                                    latitude,
+                                    longitude,
+                                    hostel.getLatitude(),
+                                    hostel.getLongitude());
+
+                    hostelDistances.put(
+                            hostel.getHostelId(),
+                            distance);
+
+                    System.out.println(
+                            hostel.getHostelName()
+                            + " -> "
+                            + distance
+                            + " KM");
+                }
+            }
+
+            // Sort nearest → farthest
+            coLiveHostels.sort(
+                    Comparator.comparingDouble(
+                            hostel ->
+                                    hostelDistances.getOrDefault(
+                                            hostel.getHostelId(),
+                                            Double.MAX_VALUE)
+                    )
+            );
+
+            System.out.println(
+                    "========== SORTED CO-LIVE HOSTELS ==========");
+
+            for (HostelEntity hostel : coLiveHostels) {
+
+                Double distance =
+                        hostelDistances.get(
+                                hostel.getHostelId());
+
+                if (distance != null) {
+
+                    System.out.println(
+                            hostel.getHostelName()
+                            + " -> "
+                            + distance
+                            + " KM");
+                }
+            }
+
+            System.out.println(
+                    "=============================================");
+        }
 
         model.addAttribute(
                 "hostels",
                 coLiveHostels);
 
+        model.addAttribute(
+                "hostelDistances",
+                hostelDistances);
+
         return "colive_hostels";
     }
-
 
     // =====================================================
     // ABOUT

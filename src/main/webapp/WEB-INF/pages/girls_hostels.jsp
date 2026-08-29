@@ -158,12 +158,32 @@
                                         ${hostel.state}
 
                                     </div>
-                                     <c:if test="${not empty hostel.distance}">
-                                        <div class="hostel-distance">
-                                        📍 <fmt:formatNumber value="${hostel.distance}" maxFractionDigits="3"/>
-                                         km away
-                                        </div>
-                                    </c:if>
+                                    <div class="hostel-distance">
+    📍
+    <%
+        java.util.Map<Long, Double> distances =
+                (java.util.Map<Long, Double>)
+                request.getAttribute("hostelDistances");
+
+        com.nt.entity.HostelEntity currentHostel =
+                (com.nt.entity.HostelEntity)
+                pageContext.getAttribute("hostel");
+
+        if (distances != null && currentHostel != null) {
+
+            Double distance =
+                    distances.get(currentHostel.getHostelId());
+
+            if (distance != null) {
+    %>
+
+                <%= String.format("%.2f", distance) %> km away
+
+    <%
+            }
+        }
+    %>
+</div>
                                     <!-- ADDRESS -->
 
                             <div class="user-location">
@@ -189,7 +209,14 @@
                             <div class="user-phone">
 
                                 📞
-                                ${hostel.ownerPhone}
+                                ${hostel.ownerPhone} 
+                                 <c:if test="${not empty hostel.alternatePhone}">
+
+                                    &nbsp;&nbsp;
+
+                                    ☎ ${hostel.alternatePhone}
+
+                                </c:if>
 
                             </div>
 
@@ -410,6 +437,54 @@
     </p>
 
 </footer>
+<script>
+
+window.addEventListener("load", function () {
+
+    const latitude =
+        sessionStorage.getItem("userLatitude");
+
+    const longitude =
+        sessionStorage.getItem("userLongitude");
+
+    if (!latitude || !longitude) {
+        console.log("Location not available.");
+        return;
+    }
+
+    const url =
+        new URL(window.location.href);
+
+    const currentLatitude =
+        url.searchParams.get("latitude");
+
+    const currentLongitude =
+        url.searchParams.get("longitude");
+
+    if (!currentLatitude || !currentLongitude) {
+
+        url.searchParams.set(
+            "latitude",
+            latitude
+        );
+
+        url.searchParams.set(
+            "longitude",
+            longitude
+        );
+
+        window.location.href =
+            url.toString();
+
+        return;
+    }
+
+    console.log("Latitude  : " + currentLatitude);
+    console.log("Longitude : " + currentLongitude);
+
+});
+
+</script>
 
 </body>
 

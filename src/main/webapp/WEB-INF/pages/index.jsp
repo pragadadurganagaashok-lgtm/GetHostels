@@ -304,6 +304,13 @@ pageEncoding="UTF-8"%>
 
                                 ☎
                                 ${hostel.ownerPhone}
+                                 <c:if test="${not empty hostel.alternatePhone}">
+
+                                    &nbsp;&nbsp;
+
+                                    ☎ ${hostel.alternatePhone}
+
+                                </c:if>
 
                             </div>
 
@@ -547,47 +554,115 @@ pageEncoding="UTF-8"%>
 
 window.addEventListener("load", function () {
 
-    // Check browser GPS support
+    const savedLatitude =
+        sessionStorage.getItem("userLatitude");
+
+    const savedLongitude =
+        sessionStorage.getItem("userLongitude");
+
+
+    // =====================================================
+    // LOCATION ALREADY SAVED
+    // =====================================================
+
+    if (savedLatitude && savedLongitude) {
+
+        console.log("Location already saved.");
+
+        console.log(
+            "User Latitude  : " + savedLatitude
+        );
+
+        console.log(
+            "User Longitude : " + savedLongitude
+        );
+
+
+        // Check URL
+        const urlParams =
+            new URLSearchParams(window.location.search);
+
+        const existingLatitude =
+            urlParams.get("latitude");
+
+        const existingLongitude =
+            urlParams.get("longitude");
+
+
+        // Add location to Home URL if missing
+        if (!existingLatitude || !existingLongitude) {
+
+            const currentUrl =
+                new URL(window.location.href);
+
+            currentUrl.searchParams.set(
+                "latitude",
+                savedLatitude
+            );
+
+            currentUrl.searchParams.set(
+                "longitude",
+                savedLongitude
+            );
+
+            window.location.href =
+                currentUrl.toString();
+        }
+
+        return;
+    }
+
+
+    // =====================================================
+    // GET LOCATION FOR FIRST TIME
+    // =====================================================
+
     if (!navigator.geolocation) {
 
-        console.log("Geolocation is not supported.");
+        console.log(
+            "Geolocation is not supported."
+        );
 
         return;
     }
 
-    // Check if location is already present in URL
-    const urlParams = new URLSearchParams(window.location.search);
 
-    const existingLatitude = urlParams.get("latitude");
-    const existingLongitude = urlParams.get("longitude");
-
-    // If location already exists, DON'T request/reload again
-    if (existingLatitude && existingLongitude) {
-
-        console.log("Location already available.");
-
-        console.log("User Latitude  : " + existingLatitude);
-        console.log("User Longitude : " + existingLongitude);
-
-        return;
-    }
-
-    // Request location only once
     navigator.geolocation.getCurrentPosition(
 
         function (position) {
 
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+            const latitude =
+                position.coords.latitude;
 
-            console.log("User Latitude  : " + latitude);
-            console.log("User Longitude : " + longitude);
+            const longitude =
+                position.coords.longitude;
 
-            // Current URL
+
+            console.log(
+                "User Latitude  : " + latitude
+            );
+
+            console.log(
+                "User Longitude : " + longitude
+            );
+
+
+            // Save in sessionStorage
+            sessionStorage.setItem(
+                "userLatitude",
+                latitude
+            );
+
+            sessionStorage.setItem(
+                "userLongitude",
+                longitude
+            );
+
+
+            // Add to Home URL
             const currentUrl =
                 new URL(window.location.href);
 
-            // Add location to URL
             currentUrl.searchParams.set(
                 "latitude",
                 latitude
@@ -598,7 +673,7 @@ window.addEventListener("load", function () {
                 longitude
             );
 
-            // Reload ONLY ONCE
+
             window.location.href =
                 currentUrl.toString();
 

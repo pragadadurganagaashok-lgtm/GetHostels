@@ -185,6 +185,32 @@
                                 ${hostel.state}
 
                             </div>
+                            <div class="hostel-distance">
+    📍
+    <%
+        java.util.Map<Long, Double> distances =
+                (java.util.Map<Long, Double>)
+                request.getAttribute("hostelDistances");
+
+        com.nt.entity.HostelEntity currentHostel =
+                (com.nt.entity.HostelEntity)
+                pageContext.getAttribute("hostel");
+
+        if (distances != null && currentHostel != null) {
+
+            Double distance =
+                    distances.get(currentHostel.getHostelId());
+
+            if (distance != null) {
+    %>
+
+                <%= String.format("%.2f", distance) %> km away
+
+    <%
+            }
+        }
+    %>
+</div>
 
 
                             <!-- ADDRESS -->
@@ -433,7 +459,54 @@
     © 2026 Get Hostel. All Rights Reserved.
 
 </footer>
+<script>
 
+window.addEventListener("load", function () {
+
+    const latitude =
+        sessionStorage.getItem("userLatitude");
+
+    const longitude =
+        sessionStorage.getItem("userLongitude");
+
+    if (!latitude || !longitude) {
+        console.log("Location not available.");
+        return;
+    }
+
+    const url =
+        new URL(window.location.href);
+
+    const currentLatitude =
+        url.searchParams.get("latitude");
+
+    const currentLongitude =
+        url.searchParams.get("longitude");
+
+    if (!currentLatitude || !currentLongitude) {
+
+        url.searchParams.set(
+            "latitude",
+            latitude
+        );
+
+        url.searchParams.set(
+            "longitude",
+            longitude
+        );
+
+        window.location.href =
+            url.toString();
+
+        return;
+    }
+
+    console.log("Latitude  : " + currentLatitude);
+    console.log("Longitude : " + currentLongitude);
+
+});
+
+</script>
 
 </body>
 
