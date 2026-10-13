@@ -1,8 +1,10 @@
 package com.nt.controller;
 
-import java.util.List;
+import java.util.HashMap;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,22 +16,35 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.nt.entity.HostelEntity;
+import com.nt.entity.HostelFloorEntity;
+import com.nt.entity.HostelRoomEntity;
 import com.nt.entity.OwnerEntity;
+import com.nt.entity.HostelBedEntity;
+
 import com.nt.service.CloudinaryService;
+import com.nt.service.HostelFloorService;
+import com.nt.service.HostelRoomService;
 import com.nt.service.IHostelMgmtService;
+import com.nt.service.HostelBedService;
+
 import com.nt.util.GoogleMapUtil;
 
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+
+
 
 @Controller
 @RequestMapping("/owner")
+@RequiredArgsConstructor
 public class HostelController {
 
-    @Autowired
-    private IHostelMgmtService hostelService;
+    private final IHostelMgmtService hostelService;
+    private final CloudinaryService cloudinaryService;
+    private final HostelFloorService floorService;
+    private final HostelRoomService roomService;
+    private final HostelBedService bedService;
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
 
     // =====================================================
     // ADD HOSTEL PAGE
@@ -45,6 +60,7 @@ public class HostelController {
         return "add_hostel";
     }
 
+
     // =====================================================
     // SAVE HOSTEL
     // =====================================================
@@ -52,14 +68,11 @@ public class HostelController {
     @PostMapping("/saveHostel")
     public String saveHostel(
             @ModelAttribute HostelEntity hostel,
-            @RequestParam(value = "image", required = false) MultipartFile image,
+            @RequestParam(value = "image", required = false)
+            MultipartFile image,
             HttpSession session) {
 
         try {
-
-            // -------------------------------------------------
-            // CHECK OWNER LOGIN
-            // -------------------------------------------------
 
             OwnerEntity owner =
                     (OwnerEntity) session.getAttribute("owner");
@@ -69,6 +82,7 @@ public class HostelController {
             }
 
             hostel.setOwner(owner);
+
 
             // =================================================
             // GOOGLE MAP LOCATION
@@ -91,7 +105,6 @@ public class HostelController {
                 if (coordinates != null) {
 
                     hostel.setLatitude(coordinates[0]);
-
                     hostel.setLongitude(coordinates[1]);
 
                     System.out.println(
@@ -111,6 +124,7 @@ public class HostelController {
                 System.out.println(
                         "==========================================");
             }
+
 
             // =================================================
             // CLOUDINARY IMAGE UPLOAD
@@ -151,6 +165,7 @@ public class HostelController {
                         "NO IMAGE SELECTED");
             }
 
+
             // =================================================
             // SAVE HOSTEL
             // =================================================
@@ -181,12 +196,12 @@ public class HostelController {
                     "===================================");
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
         return "redirect:/owner/myHostels";
     }
+
 
     // =====================================================
     // MY HOSTELS
@@ -243,6 +258,7 @@ public class HostelController {
         return "my_hostels";
     }
 
+
     // =====================================================
     // EDIT HOSTEL
     // =====================================================
@@ -267,12 +283,68 @@ public class HostelController {
             return "redirect:/owner/myHostels";
         }
 
+
+        // =================================================
+        // GET FLOORS
+        // =================================================
+
+        List<HostelFloorEntity> floors =
+                floorService.getFloorsByHostel(hostel);
+
+
+        // =================================================
+        // GET ROOMS FOR EACH FLOOR
+        // =================================================
+
+        Map<Long, List<HostelRoomEntity>> roomsByFloor =
+                new HashMap<>();
+
+        Map<Long, List<HostelBedEntity>> bedsByRoom =
+                new HashMap<>();
+
+        for (HostelFloorEntity floor : floors) {
+
+            List<HostelRoomEntity> rooms =
+                    roomService.getRoomsByFloor(floor);
+
+            roomsByFloor.put(
+                    floor.getFloorId(),
+                    rooms);
+
+            // Get beds for every room
+            for (HostelRoomEntity room : rooms) {
+
+                List<HostelBedEntity> beds =
+                        bedService.getBedsByRoom(room);
+
+                bedsByRoom.put(
+                        room.getRoomId(),
+                        beds);
+            }
+        }
+
+        // =================================================
+        // SEND DATA TO JSP
+        // =================================================
+
         model.addAttribute(
                 "hostel",
                 hostel);
 
+        model.addAttribute(
+                "floors",
+                floors);
+
+        model.addAttribute(
+                "roomsByFloor",
+                roomsByFloor);
+        model.addAttribute("bedsByRoom"
+        		, bedsByRoom);
+
+
         return "add_hostel";
     }
+
 
     // =====================================================
     // UPDATE HOSTEL
@@ -302,18 +374,21 @@ public class HostelController {
                 return "redirect:/owner/myHostels";
             }
 
-            // -------------------------------------------------
+
+            // =================================================
             // OWNER
-            // -------------------------------------------------
+            // =================================================
 
             hostel.setOwner(owner);
 
-            // -------------------------------------------------
+
+            // =================================================
             // KEEP OLD IMAGE
-            // -------------------------------------------------
+            // =================================================
 
             hostel.setCoverImage(
                     existingHostel.getCoverImage());
+
 
             // =================================================
             // GOOGLE MAP LOCATION
@@ -351,9 +426,6 @@ public class HostelController {
 
                 } else {
 
-                    // Keep existing coordinates if
-                    // the new URL cannot be processed.
-
                     hostel.setLatitude(
                             existingHostel.getLatitude());
 
@@ -362,16 +434,15 @@ public class HostelController {
 
                     System.out.println(
                             "Could not extract new coordinates.");
+
                     System.out.println(
                             "Keeping existing coordinates.");
                 }
 
                 System.out.println(
                         "=======================================");
-            } else {
 
-                // No new Google Maps URL supplied.
-                // Keep existing location.
+            } else {
 
                 hostel.setLatitude(
                         existingHostel.getLatitude());
@@ -379,6 +450,7 @@ public class HostelController {
                 hostel.setLongitude(
                         existingHostel.getLongitude());
             }
+
 
             // =================================================
             // NEW CLOUDINARY IMAGE
@@ -399,6 +471,7 @@ public class HostelController {
                 hostel.setCoverImage(
                         imageUrl);
             }
+
 
             // =================================================
             // UPDATE DATABASE
@@ -422,12 +495,12 @@ public class HostelController {
                     + hostel.getLongitude());
 
         } catch (Exception e) {
-
             e.printStackTrace();
         }
 
         return "redirect:/owner/myHostels";
     }
+
 
     // =====================================================
     // DELETE HOSTEL
@@ -449,4 +522,5 @@ public class HostelController {
 
         return "redirect:/owner/myHostels";
     }
+
 }

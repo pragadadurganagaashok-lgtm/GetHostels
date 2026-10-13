@@ -9,7 +9,10 @@ pageEncoding="UTF-8"%>
 <head>
 
 <meta charset="UTF-8">
-<title>Get Hostel</title>
+<title >Get Hostel</title>
+ <link rel="icon"
+          type="image/png"
+          href="${pageContext.request.contextPath}/images/GetHostelLogo.png">
 
 <link rel="stylesheet"
       href="${pageContext.request.contextPath}/css/style.css">
@@ -23,7 +26,7 @@ pageEncoding="UTF-8"%>
 <header>
 
     <div class="logo">
-        <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo">
+        <img src="${pageContext.request.contextPath}/images/GetHostelLogo.png" alt="Logo">
         <h1>Get Hostel</h1>
     </div>
 
@@ -72,13 +75,17 @@ pageEncoding="UTF-8"%>
 
             <div class="dropdown">
 
-                <a href="#">Madhapur</a>
+                <a href="#">Ameerpet</a>
                 <a href="#">Gachibowli</a>
                 <a href="#">Kukatpally</a>
-                <a href="#">Ameerpet</a>
+                <a href="#">Madhapur</a>
                 <a href="#">Kondapur</a>
                 <a href="#">Miyapur</a>
                 <a href="#">Hitech City</a>
+                <a href="#">SR Nagar</a>
+                <a href="#">Gowldoddi</a>
+                <a href="#">KPHB Colony</a>
+                <a href="#">Dilsuk Nagar</a>
                 <a href="#">See More...</a>
 
             </div>
@@ -483,14 +490,12 @@ pageEncoding="UTF-8"%>
                             <div class="user-card-buttons">
 
 
-                                <a
-                                class="view-beds-btn"
-                                href="#">
+                               <a
+                                  class="view-beds-btn"
+                                  href="${pageContext.request.contextPath}/hostel/${hostel.hostelId}/beds">
+                                  🛏 View Beds
 
-                                    🛏 View Beds
-
-                                </a>
-
+                               </a>
 
                                 <a
                                 class="map-btn"

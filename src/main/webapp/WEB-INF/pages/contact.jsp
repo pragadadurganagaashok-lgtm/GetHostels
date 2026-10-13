@@ -121,7 +121,8 @@
             </p>
 
             <a href="tel:+919999999999">
-                +91 99999 99999
+                +91 96586 62666 ,
+                +91 82470 18414
             </a>
 
         </div>
@@ -160,7 +161,7 @@
             <h3>Location</h3>
 
             <p>
-                Hyderabad, Telangana, India
+             9-12, 3rd floor, Tawakkal Nagar,Yellareddy Guda,Ameerpet,Hyderabad, 500073,Telangana, India
             </p>
 
         </div>
